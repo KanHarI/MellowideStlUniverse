@@ -21,6 +21,9 @@ class stl_container(object):
     def serialize(self):
         return self._header + struct.pack("i", len(self._facets)) + b''.join(map(lambda x: x.serialize(), self._facets))
 
+    def add_cont(self, other):
+        self._facets += other._facets
+
 class facet(object):
     """"""
     def __init__(self, vertices):

@@ -61,10 +61,26 @@ class sphere(object):
         z = self._r*sin(alpha)
         return stl.vector(x,y,z)
 
+    def get_cont(self):
+        return self._stl_cont
+        
+
+def create_hollow_sphere(r, angel_steps, thickness):
+    s1 = sphere(r, angel_steps).get_cont()
+    # radius is negative => normal points inside
+    negative_radius_of_internall_wall = thickness - r
+    s2 = sphere(negative_radius_of_internall_wall, angel_steps).get_cont()
+    # offset to keep all points non-negative
+    offset = stl.vector(r,r,r)
+    s1.add_offset(offset)
+    s2.add_offset(offset)
+    s1.add_cont(s2)
+    return s1
+    
 
 def main():
-    s = sphere(10, 20)
-    open("out.stl", 'wb').write(s._stl_cont.serialize())
+    s = create_hollow_sphere(10, 20, 1)
+    open("out.stl", 'wb').write(s.serialize())
     
 main()
 
