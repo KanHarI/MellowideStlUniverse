@@ -72,7 +72,7 @@ class vector(object):
         return self
 
     def __add__(self, other):
-        "assume other is a vector"""
+        """assume other is a vector"""
         return vector(self._x + other._x, self._y + other._y, self._z + other._z)
 
     def __itruediv__(self, other):
