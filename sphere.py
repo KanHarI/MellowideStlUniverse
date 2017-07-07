@@ -7,8 +7,8 @@ from random import random
 
 class sphere(object):
     """create a shpere around 0,0,0"""
-    def __init__(self, r, angel_steps, func=None):
-        self._stl_cont = stl.stl_container()
+    def __init__(self, r, angel_steps, tmp_file, func=None):
+        self._stl_cont = stl.stl_container(tmp_file)
         self._r = r
         self._angel_steps = angel_steps
         if func is None:
@@ -16,6 +16,7 @@ class sphere(object):
         else:
             self._func = func
         for i in range(angel_steps):
+            print("%d of %d" % (i, angel_steps))
             for j in range(angel_steps*2):
                 try:
                     self._stl_cont.add_facet(
@@ -40,6 +41,7 @@ class sphere(object):
                     )
                 except ZeroDivisionError as e:
                     pass
+            self._stl_cont.flush()
 
 
     def gen_lat(self, step):
@@ -77,14 +79,10 @@ class sphere(object):
         
 
 def create_hollow_sphere(r, angel_steps, thickness, func=None):
-    s1 = sphere(r, angel_steps, func).get_cont()
+    s1 = sphere(r, angel_steps, "tmp1.tmp", func).get_cont()
     # radius is negative => normal points inside
     negative_radius_of_internall_wall = thickness - r
-    s2 = sphere(negative_radius_of_internall_wall, angel_steps).get_cont()
-    # offset to keep all points non-negative
-    offset = stl.vector(r,r,r)
-    s1.add_offset(offset)
-    s2.add_offset(offset)
+    s2 = sphere(negative_radius_of_internall_wall, angel_steps, "tmp2.tmp").get_cont()
     s1.add_cont(s2)
     return s1
     
@@ -95,16 +93,26 @@ def main():
         r = color._x
         g = color._y
         b = color._z
-        if (g>200): # we are on white!
+        if (g>250): # we are on white!
             raise Exception("Image parsing error!")
-        return r>b
+            pass
+        return r+g>b
 
-    image = jpg_parser("CBR.jpg", color_to_bool)
-    f1 = lambda *args: 0.99 if image.read_pixel(*args) else 1.01
-    f2 = lambda *args: 0.99 if not image.read_pixel(*args) else 1.01
-    s = create_hollow_sphere(20, 500, 4, f1)
+    image = jpg_parser("CBR2.jpg", color_to_bool)
+
+    cache = {}
+    def cached_image_read_pixel(*args):
+        if args in cache.keys():
+            return cache[args]
+        result = image.read_pixel(*args)
+        cache[args] = result
+        return result
+
+    f1 = lambda *args: 0.999 if cached_image_read_pixel(*args) else 1.001
+    f2 = lambda *args: 0.999 if not cached_image_read_pixel(*args) else 1.001
+    s = create_hollow_sphere(20, 1000, 4, f1)
     open("out1.stl", 'wb').write(s.serialize())
-    s = create_hollow_sphere(20, 500, 4, f2)
+    s = create_hollow_sphere(20, 1000, 4, f2)
     open("out2.stl", 'wb').write(s.serialize())
 
     

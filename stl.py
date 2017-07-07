@@ -8,21 +8,35 @@ class stl_container(object):
     """"""
     HEADER_SIZE = 80
 
-    def __init__(self):
+    def __init__(self, tmp_file):
         self._header = b'\x00'*stl_container.HEADER_SIZE
         self._facets = []
+        self._num_facets = 0
+        print ("openning", tmp_file)
+        self._tmp_file = open(tmp_file, "w+b")
 
     def add_facet(self, facet):
         self._facets.append(facet)
-
-    def add_offset(self, offset):
-        map(lambda x: x.add_offset(offset), self._facets)
+        self._num_facets += 1
 
     def serialize(self):
-        return self._header + struct.pack("i", len(self._facets)) + b''.join(map(lambda x: x.serialize(), self._facets))
+        return self._header + struct.pack("i", self._num_facets) + self._read_tmp() + b''.join(map(lambda x: x.serialize(), self._facets))
 
     def add_cont(self, other):
+        self._tmp_file.write(other._read_tmp())
         self._facets += other._facets
+        self.flush()
+
+    def flush(self):
+        self._tmp_file.write(b''.join(map(lambda x: x.serialize(), self._facets)))
+        self._facets = []
+
+    def _read_tmp(self):
+        old_pos = self._tmp_file.tell()
+        self._tmp_file.seek(0)
+        result = self._tmp_file.read()
+        self._tmp_file.seek(old_pos)
+        return result
 
 class facet(object):
     """"""
@@ -43,10 +57,6 @@ class facet(object):
         v = reduce(lambda x,y: x+y, v)
         v /= v.euclidean_size()
         return v
-
-    def add_offset(self, offset):
-        for vertix in self._vertices:
-            vertix += offset
     
     def serialize(self):
         return self._normal.serialize() + b''.join(map(lambda x: x.serialize(), self._vertices)) + self._attribute
