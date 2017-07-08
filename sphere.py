@@ -108,11 +108,11 @@ def main():
         cache[args] = result
         return result
 
-    f1 = lambda *args: 0.999 if cached_image_read_pixel(*args) else 1.001
-    f2 = lambda *args: 0.999 if not cached_image_read_pixel(*args) else 1.001
-    s = create_hollow_sphere(20, 1000, 4, f1)
+    f1 = lambda *args: 0.995 if cached_image_read_pixel(*args) else 1.005
+    f2 = lambda *args: 0.995 if not cached_image_read_pixel(*args) else 1.005
+    s = create_hollow_sphere(50, 500, 1, f1)
     open("out1.stl", 'wb').write(s.serialize())
-    s = create_hollow_sphere(20, 1000, 4, f2)
+    s = create_hollow_sphere(50, 500, 1, f2)
     open("out2.stl", 'wb').write(s.serialize())
 
     
