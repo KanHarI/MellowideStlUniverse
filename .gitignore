@@ -104,4 +104,4 @@ ENV/
 *.swp
 *.jpg
 *.tmp
-
+.idea/
