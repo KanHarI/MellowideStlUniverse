@@ -13,7 +13,7 @@ class jpg_parser(object):
         if (h%2 != 0) or (w%2 != 0):
             raise Exception("Image not suitable - odd number of pixels in either dimensions")
         self._radius = min(h//2,w//4)
-        self._max_angular_resolution = (pi/self._radius)*2 # factor 4, better safe then sorry
+        self._max_angular_resolution = (pi/self._radius)/2 # factor 4, better safe then sorry
         self._center = (h//2, w//2)
         self._phi_results = {}
         if func is None:
@@ -46,23 +46,6 @@ class jpg_parser(object):
         h += self._center[0]
         w += self._center[1]
         h,w = (floor(h), floor(w))
-        # global min_h
-        # global min_w
-        # global max_h
-        # global max_w
-        # if h < min_h:
-        #     min_h = h
-        # if w < min_w:
-        #     min_w = w
-        # if h > max_h:
-        #     max_h = h
-        # if w > max_w:
-        #     max_w = w
-        # print("") # new line
-        # print("h range:", h,min_h,max_h)
-        # print("w range:", w,min_w,max_w)
-        # print("alpha, theta:", alpha, theta)
-        # luckily pixels is a 3-vector
         result = vector(*self._pixels[w,h])
         return result
 

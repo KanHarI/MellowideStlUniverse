@@ -3,7 +3,7 @@
 import stl
 from math import pi, sin, cos, sqrt
 from jpgParser import jpg_parser
-from random import random
+
 
 class sphere(object):
     """create a shpere around 0,0,0"""

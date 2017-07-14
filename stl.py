@@ -4,6 +4,7 @@ import struct
 from functools import reduce
 from math import sqrt
 
+
 class stl_container(object):
     """"""
     HEADER_SIZE = 80
@@ -14,6 +15,30 @@ class stl_container(object):
         self._num_facets = 0
         print ("openning", tmp_file)
         self._tmp_file = open(tmp_file, "w+b")
+
+
+    def add_cube(self, pts):
+        squares = [
+            (0,1,2,3),
+            (4,5,0,1),
+            (2,3,6,7),
+            (6,7,4,5),
+            (4,0,6,2),
+            (1,5,3,7),
+        ]
+        for square_pts in squares:
+            square_pts = tuple(map(lambda x: pts[x], square_pts))
+            self.add_square(square_pts)
+
+    def add_square(self, pts):
+        try:
+            self.add_facet(facet((pts[0],pts[1], pts[3])))
+        except ZeroDivisionError as e:
+            pass
+        try:
+            self.add_facet(facet((pts[0],pts[3], pts[2])))
+        except ZeroDivisionError as e:
+            pass
 
     def add_facet(self, facet):
         self._facets.append(facet)
@@ -38,6 +63,7 @@ class stl_container(object):
         self._tmp_file.seek(old_pos)
         return result
 
+
 class facet(object):
     """"""
     def __init__(self, vertices):
@@ -60,6 +86,7 @@ class facet(object):
     
     def serialize(self):
         return self._normal.serialize() + b''.join(map(lambda x: x.serialize(), self._vertices)) + self._attribute
+
 
 class vector(object):
     """used as either point or normal vector"""
