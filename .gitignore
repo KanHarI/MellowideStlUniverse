@@ -105,3 +105,4 @@ ENV/
 *.jpg
 *.tmp
 .idea/
+tmp*
