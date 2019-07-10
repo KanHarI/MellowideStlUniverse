@@ -4,7 +4,7 @@ import PIL.Image as im
 from math import pi, sin, cos, floor, sqrt
 from stl import vector
 
-class jpg_parser(object):
+class inverse_mellowide_jpg(object):
     """opens a jpg image as a spherical projection"""
     def __init__(self, path, func=None):
         self._image = im.open(path)

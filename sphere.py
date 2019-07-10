@@ -2,7 +2,7 @@
 
 import stl
 from math import pi, sin, cos, sqrt
-from jpgParser import jpg_parser
+from inverseMellowide import inverse_mellowide_jpg
 
 
 class sphere(object):

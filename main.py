@@ -2,7 +2,7 @@
 
 import stl
 from math import pi, sin, cos, sqrt
-from jpgParser import jpg_parser
+from inverseMellowide import inverse_mellowide_jpg
 
 
 class voxel_half_sphere(object):
@@ -68,7 +68,7 @@ def main():
         return (r-b)
 
 
-    image = jpg_parser("CBR2.jpg", color_to_int)
+    image = inverse_mellowide_jpg("CBR2.jpg", color_to_int)
 
     
     global main_cache
